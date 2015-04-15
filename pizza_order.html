@@ -137,8 +137,11 @@ else
 
 	
 // calculate price
-pizzaPrice = pizzaBasePrice + pricePerTopping * howManyToppings;
-document.getElementById('pricetext').innerHTML = pizzaPrice;
+
+    pizzaPrice = pizzaBasePrice + pricePerTopping * howManyToppings;
+    document.getElementById('pricetext').innerHTML = pizzaPrice;
+    document.getElementById('price').setAttribute('value', pizzaPrice);
+
 
 }
 
@@ -180,7 +183,7 @@ return valid;
 <body>
 
     <h2 id="heading">Pizzas Order Form</h2>
-    <form  id="pizza-form" onSubmit="return validateInput();" name="theform" method="post" action="http://atlantis.cit.ie/displayvalues.php">
+    <form  id="pizza-form" onSubmit="return validateInput();" name="theform" method="post" action="vieworder.php">
       <h3>What Size of Pizza Would You Like? </h3>
      
         Small
@@ -223,6 +226,8 @@ return valid;
    
    
      <h3>Total Price is: €<span id="pricetext">18</span></h3>
+        <input id="price" name="price" hidden="true" value="18"/>
+
      
       
         <h3>Enter your  details</h3>
@@ -245,7 +250,7 @@ return valid;
 		 <br/>
          <br/>
 		Tick here if you are student:
-        <input type="checkbox" id="studentdiscount" name="student" onChange="redraw()"/>
+        <input id="studentdiscount" type="checkbox" name="student" value="yes" onChange="redraw()" checked/>
        
   
       <br/>
