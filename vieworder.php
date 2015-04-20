@@ -113,7 +113,12 @@ if (!isset($_GET['order_id'])){ //Are we reviewing an existing order? If not...
     }
 
 }else {
-    include 'vieworderbyuniqueid.php';
+
+    if (isset($_GET['update'])){
+        include 'updateorderbyuniqueid.php';
+    }else {
+        include 'vieworderbyuniqueid.php';
+    }
     /**
      * vieworderbyuniqueid.php
      * Created by PhpStorm.
@@ -290,6 +295,9 @@ function displayReceipt($order_id, $db){
                     $ingredients = $ingredients . 'Peppers, ';
                 }
                 echo $ingredients;
+
+
+                $thisOrderUrl = "order.php?order_id='" . $order_id . "'";
                 echo '
                 <html>
                 <head>
@@ -303,12 +311,12 @@ function displayReceipt($order_id, $db){
                 <H3> Pizza Delivery Ltd. </H3>
                 <br>
                 <br>
-                <p>Summary of Order# <strong>' . $order_id . '</strong>...</p>
+                <p>Summary of Order# ' . $order_id . '...</p>
                 <p>You have ordered a ' . $order["size"] . ' pizza with ' . $ingredients . '.</p>
                 <p>You placed your order at ' . $order["createddatetime"] . ' and you should expect delivery in around 30 minutes.</p>
                 <br>
                 <br>
-                <p>If you would like to CHANGE your order, please click <a href="url">>> here <<</a></p>
+                <p>If you would like to CHANGE your order, please click <a href="' . $thisOrderUrl . '">>> here <<</a></p>
                 <br>
                 <p>If you would like to CANCEL your order, please click <a href="url">>> here <<</a></p>
 
