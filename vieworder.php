@@ -208,25 +208,18 @@ if (!isset($_GET['order_id'])){ //Are we reviewing an existing order? If not...
 
         }
 
-    }else if($_POST['update'] == "1") {
+    }else if($_POST['update'] == "1") {                                                //// UPDATE CODE HERE
         //Update the Order
         $order_id = $_POST['order_id'];
         echo "Updating Order: " . $order_id;
 
-//// UPDATE CODE HERE
 
-        /*
-    * Following code will update a product information
-    * A product is identified by product id (pid)
-    */
-
-// array for JSON response
+        // array for JSON response
         $response = array();
 
         // check for required fields
         if (isset($_POST['order_id']) && isset($_POST['customerName']) && isset($_POST['address']) && isset($_POST['emailAddress']) &&
-            isset($_POST['phoneNo'])
-        ) {
+            isset($_POST['phoneNo'])) {
 
             $orderId = $_POST['order_id'];
             $customerName = explode(" ", $_POST['customerName']);
@@ -328,8 +321,10 @@ if (!isset($_GET['order_id'])){ //Are we reviewing an existing order? If not...
                 $response["success"] = 1;
                 $response["message"] = "Order successfully updated.";
 
+                displayReceipt($order_id);
+
                 // echoing JSON response
-                echo json_encode($response);
+                //echo json_encode($response);
             } else {
 
             }
@@ -342,31 +337,8 @@ if (!isset($_GET['order_id'])){ //Are we reviewing an existing order? If not...
             echo json_encode($response);
 
 
-//// END OF UPDATE CODE
-
-            foreach ($_POST as $key => $value) {
-                echo "<br><tr>";
-                echo "<td>";
-                echo $key;
-                echo "</td>";
-                echo "<td>";
-                echo $value;
-                echo "</td>";
-                echo "</tr>";
-            }
-
-            foreach ($_GET as $key => $value) {
-                echo "<br><tr>";
-                echo "<td>";
-                echo $key;
-                echo "</td>";
-                echo "<td>";
-                echo $value;
-                echo "</td>";
-                echo "</tr>";
-            }
         }
-    }
+    }                                                          //// END OF UPDATE CODE
 }else {                                                        // $_GET['order_id'] is SET
     if(!isset($_GET['update'])) {        //Not Updating
         //Need to display the Receipt page of the specified order.
@@ -472,14 +444,16 @@ function getOrder($order_id){
             //$changeOrderUrl = $_SERVER['PHP_SELF'];
             //echo $changeOrderUrl;
             //include "pizza_order_receipt.html.php";
+            return true;
 
         } else {
             // no location found
             $response["success"] = 0;
             $response["message"] = "Order Not Found";
-
+            $order["id"] = '0';
             // echo no users JSON
             echo json_encode($response);
+            return false;
         }
     } else {
         // no location found
@@ -488,6 +462,7 @@ function getOrder($order_id){
 
         // echo no users JSON
         echo json_encode($response);
+        return false;
     }
     echo "Finished GET ORDER FUNCTION";
 }
@@ -500,9 +475,12 @@ function displayReceipt($order_id){
     global $order;          //Array to be populated by getOrder
     global $ingredients;    //ingredients String to be populated by getOrder;
 
-    getOrder($order_id);
-
-    include "pizza_order_receipt.html.php";
+    $validOrder = getOrder($order_id);
+    if($validOrder){
+        include "pizza_order_receipt.html.php";
+    }else{ //ORDER NOT FOUND
+        echo "<STRONG>I'm sorry, but the specified Order could not be found. Please check the Order Id and try again!</STRONG>";
+    }
 }
 
 ?>

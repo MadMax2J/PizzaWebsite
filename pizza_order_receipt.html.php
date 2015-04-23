@@ -29,9 +29,11 @@ $ingredients
 <p>You placed your order at <?php echo $order["createddatetime"]; ?> and you should expect delivery in around 30 minutes.</p>
 <br>
 <br>
-<p>If you would like to CHANGE your order, please click <a href="<?php echo $changeOrderUrl; ?>">>> here <<</a></p>
+<p>If you would like to CHANGE or CANCEL your order, please click <a href="<?php echo $changeOrderUrl; ?>">>> here <<</a></p>
 <br>
-<p>If you would like to CANCEL your order, please click <a href="<?php echo $cancelOrderUrl; ?>">>> here <<</a></p>
+<p>To view this order in future, please navigate your browser to :
+    <a href="<?php echo $_SERVER['PHP_SELF'] . '?order_id=' . $order_id; ?>">
+        <?php echo '/localhost' . $_SERVER['PHP_SELF'] . '?order_id=' . $order_id; ?></a></p>
 
 </body>
 </html>
