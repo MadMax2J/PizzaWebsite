@@ -12,7 +12,6 @@ input:valid {
 background-color : #99ff99;
 }
 
-.toBeSpaced {
-    padding-right: 50px ;
-    background-color: brown;
+#displayPrice {
+    font-weight: bold;
 }
