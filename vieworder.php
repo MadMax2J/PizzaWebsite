@@ -22,12 +22,11 @@ $order["views"] = $update = $delete = "";
  * All product details are read from HTTP Post Request
  */
 if (!isset($_GET['order_id'])){ //Are we reviewing an existing order? If not...
-    //Submission from order.php
+    //Order submission from the pizza_selection_form.html.php
+    //Need to check if New Order, Updating, or Deleting
 
-    // to to check if New Order, Updating, or Deleting
 
-
-    if((!isset($_POST['delete']) && ($_POST['update'] != "1"))) {
+    if((!isset($_POST['delete']) && ($_POST['update'] != "1"))) {           //If it ain't Updating or Deleting, then must be a new order.
         //New Record Insertion...
 
         // array for JSON response
@@ -38,9 +37,14 @@ if (!isset($_GET['order_id'])){ //Are we reviewing an existing order? If not...
             isset($_POST['phoneNo'])
         ) {
 
-            $customerName = explode(" ", $_POST['customerName']);
-            $firstName = $customerName[0];
-            $surname = $customerName[count($customerName) - 1];
+            if (strpos($_POST['customerName'],' ') !== false) {
+                $customerName = explode(" ", $_POST['customerName']);
+                $firstName = $customerName[0];
+                $surname = $customerName[count($customerName) - 1];
+            }else{
+                $firstName = $_POST['customerName'];
+                $surname = "";
+            }
             $address = $_POST['address'];
             $emailAddress = $_POST['emailAddress'];
             $phoneNo = $_POST['phoneNo'];
@@ -50,7 +54,6 @@ if (!isset($_GET['order_id'])){ //Are we reviewing an existing order? If not...
             $orderId = uniqid();
 
             if (isset($_POST['addAnchovies'])) {
-                //$addAnchovies = $_POST['addAnchovies'];
                 $addAnchovies = 'y';
 
             } else {
@@ -58,42 +61,36 @@ if (!isset($_GET['order_id'])){ //Are we reviewing an existing order? If not...
             }
 
             if (isset($_POST['addPineapple'])) {
-                //$addPineapple = $_POST['addPineapple'];
                 $addPineapple = 'y';
             } else {
                 $addPineapple = 'n';
             }
 
             if (isset($_POST['addPepperoni'])) {
-                //$addPepperoni = $_POST['addPepperoni'];
                 $addPepperoni = 'y';
             } else {
                 $addPepperoni = 'n';
             }
 
             if (isset($_POST['addOlives'])) {
-                //$addOlives = $_POST['addOlives'];
                 $addOlives = 'y';
             } else {
                 $addOlives = 'n';
             }
 
             if (isset($_POST['addOnion'])) {
-                //$addOnion = $_POST['addOnion'];
                 $addOnion = 'y';
             } else {
                 $addOnion = 'n';
             }
 
             if (isset($_POST['addPeppers'])) {
-                //$addPeppers = $_POST['addPeppers'];
                 $addPeppers = 'y';
             } else {
                 $addPeppers = 'n';
             }
 
             if (isset($_POST['student'])) {
-                //$student = $_POST['student'];
                 $student = 'y';
             } else {
                 $student = 'n';
@@ -155,7 +152,7 @@ if (!isset($_GET['order_id'])){ //Are we reviewing an existing order? If not...
                 displayReceipt($orderId);
 
                 // echoing JSON response
-                echo json_encode($response);
+                //echo json_encode($response);
 
             } else {
                 // failed to insert row
@@ -163,7 +160,7 @@ if (!isset($_GET['order_id'])){ //Are we reviewing an existing order? If not...
                 $response["message"] = "Oops! An error occurred.";
 
                 // echoing JSON response
-                echo json_encode($response);
+                //echo json_encode($response);
             }
         } else {
             // required field is missing
@@ -171,22 +168,18 @@ if (!isset($_GET['order_id'])){ //Are we reviewing an existing order? If not...
             $response["message"] = "Required field(s) is missing";
 
             // echoing JSON response
-            echo json_encode($response);
+            //echo json_encode($response);
         }
 
     }else if(isset($_POST['delete'])){
         //Delete the Order
         $order_id = $_POST['order_id'];
-        echo "Deleting Order: " . $order_id;
+        echo "Deleting Order: " . $order_id . " ---> ";
 
         $response = array();
 
         $query = 'DELETE FROM orders
                   WHERE order_id = "' . $order_id . '";';
-
-            // mysql inserting a new row
-            //FOR TESTING
-                    echo $query;
 
         // include db connect class
         require_once __DIR__ . '/db_connect.php';
@@ -201,9 +194,11 @@ if (!isset($_GET['order_id'])){ //Are we reviewing an existing order? If not...
             // successfully updated
             $response["success"] = 1;
             $response["message"] = "Order successfully Deleted.";
+            echo "<br>";
+            echo "Order: " . $order_id . " has been deleted. Please visit us again.";
 
             // echoing JSON response
-            echo json_encode($response);
+            //echo json_encode($response);
         } else {
 
         }
@@ -222,9 +217,16 @@ if (!isset($_GET['order_id'])){ //Are we reviewing an existing order? If not...
             isset($_POST['phoneNo'])) {
 
             $orderId = $_POST['order_id'];
-            $customerName = explode(" ", $_POST['customerName']);
-            $firstName = $customerName[0];
-            $surname = $customerName[count($customerName) - 1];
+
+            if (strpos($_POST['customerName'],' ') !== false) {
+                $customerName = explode(" ", $_POST['customerName']);
+                $firstName = $customerName[0];
+                $surname = $customerName[count($customerName) - 1];
+            }else{
+                $firstName = $_POST['customerName'];
+                $surname = "";
+            }
+
             $address = $_POST['address'];
             $emailAddress = $_POST['emailAddress'];
             $phoneNo = $_POST['phoneNo'];
@@ -307,10 +309,6 @@ if (!isset($_GET['order_id'])){ //Are we reviewing an existing order? If not...
                             peppers = "' . $addPeppers . '"
                       WHERE order_id = "' . $orderId . '";';
 
-            // mysql inserting a new row
-            //FOR TESTING
-            echo $query;
-
 
             // mysql update row with matched pid
             $result = mysql_query($query);
@@ -343,7 +341,6 @@ if (!isset($_GET['order_id'])){ //Are we reviewing an existing order? If not...
     if(!isset($_GET['update'])) {        //Not Updating
         //Need to display the Receipt page of the specified order.
 
-        //$changeOrderUrl = $_SERVER['PHP_SELF'] . "?order_id=" . $_GET['order_id'] . "&update=1";
         displayReceipt($_GET['order_id']);
     }else{                              // Am Updating
         //Need to display Sticky Form
@@ -414,8 +411,8 @@ function getOrder($order_id){
 
             // echoing JSON response
 
-            echo json_encode($response);
-            echo "Getting here also!!";
+            //echo json_encode($response);
+
             global $ingredients;
             //$ingredientsCount = 0; Might use an Ingredients array??
             global $thisOrderUrl;
@@ -438,33 +435,28 @@ function getOrder($order_id){
             if($order["peppers"] == 'y'){
                 $ingredients = $ingredients . 'Peppers, ';
             }
-            echo $ingredients;
+            //echo $ingredients;
 
-
-            //$changeOrderUrl = $_SERVER['PHP_SELF'];
-            //echo $changeOrderUrl;
-            //include "pizza_order_receipt.html.php";
             return true;
 
         } else {
-            // no location found
+            // no Order found
             $response["success"] = 0;
             $response["message"] = "Order Not Found";
             $order["id"] = '0';
-            // echo no users JSON
-            echo json_encode($response);
+
+            //echo json_encode($response);
             return false;
         }
     } else {
-        // no location found
+        // no Order found
         $response["success"] = 0;
         $response["message"] = "Order Not Found";
 
-        // echo no users JSON
-        echo json_encode($response);
+        //echo json_encode($response);
         return false;
     }
-    echo "Finished GET ORDER FUNCTION";
+
 }
 
 function displayReceipt($order_id){
@@ -479,7 +471,9 @@ function displayReceipt($order_id){
     if($validOrder){
         include "pizza_order_receipt.html.php";
     }else{ //ORDER NOT FOUND
-        echo "<STRONG>I'm sorry, but the specified Order could not be found. Please check the Order Id and try again!</STRONG>";
+        echo "<p><STRONG>I'm sorry, but the specified Order could not be found. Please check the Order Id and try again!</STRONG><br></p>";
+        echo "<p><STRONG>To place a new order, click <a href='http://localhost/PizzaWebsite/order.php'>>> here <<</a></STRONG><br></p>";
+
     }
 }
 

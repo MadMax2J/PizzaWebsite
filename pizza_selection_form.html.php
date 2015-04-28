@@ -40,8 +40,6 @@ $order_id = $order["id"] = $order["order_id"] = $order["student"] = $order["firs
 
 <form  id="pizza-form" onSubmit="return validateInput();" name="theform" method="post" action="vieworder.php">
 
-    <h1><?php echo $update; ?></h1>
-
     <h3>What Size of Pizza Would You Like? </h3>
 
     <input id="small" type="radio" name="pizzaSize" value="small" onChange="redraw()" <?php
